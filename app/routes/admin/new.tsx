@@ -1,4 +1,4 @@
-import { useActionData, Form, redirect } from "remix";
+import { useTransition, useActionData, Form, redirect } from "remix";
 import type { ActionFunction } from "remix";
 import invariant from "tiny-invariant";
 
@@ -11,6 +11,9 @@ type PostError = {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  // fake delay to test transition
+  await new Promise((res) => setTimeout(res, 1000));
+
   const formData = await request.formData();
 
   const title = formData.get("title");
@@ -37,6 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewPost() {
   const errors = useActionData();
+  const transition = useTransition();
 
   return (
     <Form method="post">
@@ -58,9 +62,9 @@ export default function NewPost() {
         <br />
         <textarea id="markdown" rows={20} name="markdown" />
       </p>
-      <p>
-        <button type="submit">Create Post</button>
-      </p>
+      <button type="submit">
+        {transition.submission ? "Creating..." : "Create Post"}
+      </button>
     </Form>
   );
 }
