@@ -51,3 +51,15 @@ export async function getPosts() {
     })
   );
 }
+
+type NewPost = {
+  title: string;
+  slug: string;
+  markdown: string;
+};
+
+export async function createPost(post: NewPost) {
+  const md = `---\ntitle: ${post.title}\n---\n\n${post.markdown}`;
+  await fs.writeFile(path.join(postsPath, post.slug + ".md"), md);
+  return getPost(post.slug);
+}
